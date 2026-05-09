@@ -31,14 +31,14 @@ export const links: Route.LinksFunction = () => [
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
       </head>
-      <body>
+      <body suppressHydrationWarning>
         {children}
         <ScrollRestoration />
         <Scripts />
@@ -55,6 +55,12 @@ const DEFAULT_AUTH_STATE: AuthState = {
 
 export default function App() {
     const [authState, setAuthState] = useState<AuthState>(DEFAULT_AUTH_STATE);
+
+  const shouldAutoRefreshAuth = () => {
+    if (typeof window === "undefined") return false;
+    const host = window.location.hostname;
+    return host.endsWith(".puter.site") || host === "puter.com" || host.endsWith(".puter.com");
+  };
 
     const refreshAuth = async () => {
         try {
@@ -74,7 +80,8 @@ export default function App() {
     }
 
     useEffect(() => {
-        refreshAuth()
+      if (!shouldAutoRefreshAuth()) return;
+      void refreshAuth();
     }, []);
 
     const signIn = async () => {
@@ -83,7 +90,7 @@ export default function App() {
     }
 
     const signOut = async () => {
-        puterSignOut();
+      await puterSignOut();
         return await refreshAuth();
     }
 
@@ -91,7 +98,7 @@ export default function App() {
       <main className="min-h-screen bg-background text-foreground relative z-10">
         <Outlet
             context={{ ...authState, refreshAuth, signIn, signOut }}
-        />;
+        />
       </main>
   )
 }
