@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "framework": "remix",
+  "framework": "react-router",
   "buildCommand": "react-router build",
   "devCommand": "react-router dev",
   "installCommand": "npm install",
