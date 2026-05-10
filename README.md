@@ -2,6 +2,12 @@
 
 Roomzup is a state-of-the-art AI-first design environment that transforms 2D floor plans into photorealistic 3D architectural renders in seconds. Built with a modern tech stack and optimized for performance and scalability.
 
+## 🚧 Project Status: MVP
+
+Roomzup is currently in its **MVP (Minimum Viable Product)** phase. While the core AI visualization engine and project persistence are fully functional, some secondary features (such as certain navbar links) may still be under development. 
+
+We are actively looking for **Interested Developers** to collaborate and help scale this project! If you're interested in AI, React Router v7, or architectural visualization, feel free to reach out or open a PR.
+
 ## ✨ Features
 
 - **2D-to-3D Visualization**: Instant architectural rendering using high-performance AI models.

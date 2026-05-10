@@ -13,6 +13,7 @@ import {useEffect, useState} from "react";
 import { getCurrentUser, signIn, signOut } from "../lib/app.actions";
 
 export const links: Route.LinksFunction = () => [
+  { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
   {
     rel: "preconnect",
