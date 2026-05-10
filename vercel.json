@@ -1,8 +1,8 @@
 {
   "version": 2,
   "framework": "react-router",
-  "buildCommand": "react-router build",
-  "devCommand": "react-router dev",
+  "buildCommand": "npm run build",
+  "devCommand": "npm run dev",
   "installCommand": "npm install",
   "cleanUrls": true
 }
