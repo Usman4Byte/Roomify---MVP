@@ -2,6 +2,12 @@
 
 Roomzup is a state-of-the-art AI-first design environment that transforms 2D floor plans into photorealistic 3D architectural renders in seconds. Built with a modern tech stack and optimized for performance and scalability.
 
+<img width="1920" height="924" alt="image" src="https://github.com/user-attachments/assets/8f89d8ed-60d4-40c9-a135-92fb1e088feb" />
+<img width="1920" height="922" alt="image" src="https://github.com/user-attachments/assets/7fe48825-b3d7-4f4f-8c06-b70a0cf4ea7d" />
+<img width="1920" height="926" alt="image" src="https://github.com/user-attachments/assets/9dcbbada-5066-42e5-9967-7115ccc2f811" />
+<img width="1920" height="923" alt="image" src="https://github.com/user-attachments/assets/8d545f3a-40ca-452b-8326-52f7c6c3a58e" />
+
+
 ## 🚧 Project Status: MVP
 
 Roomzup is currently in its **MVP (Minimum Viable Product)** phase. While the core AI visualization engine and project persistence are fully functional, some secondary features (such as certain navbar links) may still be under development. 
