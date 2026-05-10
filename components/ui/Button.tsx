@@ -1,37 +1,37 @@
-import * as React from "react"
+import { type ButtonHTMLAttributes } from 'react';
 
-export type ButtonVariant = "primary" | "secondary" | "ghost" | "danger"
-export type ButtonSize = "sm" | "md" | "lg"
-
-export type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
-	variant?: ButtonVariant
-	size?: ButtonSize
-	fullWidth?: boolean
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: 'primary' | 'secondary' | 'ghost' | 'outline';
+  size?: 'sm' | 'md' | 'lg';
+  fullWidth?: boolean;
 }
 
 const Button = ({
-	variant = "primary",
-	size = "md",
-	fullWidth = false,
-	className,
-	children,
-	...props
+  variant = 'primary',
+  size = 'md',
+  fullWidth = false,
+  className = '',
+  children,
+  ...props
 }: ButtonProps) => {
-	const combinedClassName = [
-		"btn",
-		`btn--${variant}`,
-		`btn--${size}`,
-		fullWidth ? "btn--fullWidth" : "",
-		className ?? "",
-	]
-		.filter(Boolean)
-		.join(" ")
+  const baseClass = 'btn';
+  const variantClass = `btn--${variant}`;
+  const sizeClass = `btn--${size}`;
+  const fullWidthClass = fullWidth ? 'btn--full' : '';
 
-	return (
-		<button {...props} className={combinedClassName}>
-			{children}
-		</button>
-	)
-}
+  const combinedClasses = [
+    baseClass,
+    variantClass,
+    sizeClass,
+    fullWidthClass,
+    className
+  ].filter(Boolean).join(' ');
 
-export default Button
+  return (
+    <button className={combinedClasses} {...props}>
+      {children}
+    </button>
+  );
+};
+
+export default Button;

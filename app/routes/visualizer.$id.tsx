@@ -1,14 +1,15 @@
-import { useNavigate, useOutletContext, useParams} from "react-router";
+import { useLocation, useNavigate, useOutletContext, useParams} from "react-router";
 import {useEffect, useRef, useState} from "react";
-import {generate3DView} from "../../lib/ai.action";
+import { generate3DView, getOpenRouterApiKey, setOpenRouterApiKey } from "../../lib/ai.action";
 import {Box, Download, RefreshCcw, Share2, X} from "lucide-react";
 import Button from "../../components/ui/Button";
-import {createProject, getProjectById} from "../../lib/puter.action";
+import { createProject, getProjectById } from "../../lib/app.actions";
 import {ReactCompareSlider, ReactCompareSliderImage} from "react-compare-slider";
 
 const VisualizerId = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+    const location = useLocation();
     const { userId } = useOutletContext<AuthContext>()
 
     const hasInitialGenerated = useRef(false);
@@ -18,6 +19,10 @@ const VisualizerId = () => {
 
     const [isProcessing, setIsProcessing] = useState(false);
     const [currentImage, setCurrentImage] = useState<string | null>(null);
+    const [openRouterKey, setOpenRouterKeyState] = useState("");
+    const [isKeySaved, setIsKeySaved] = useState(false);
+    const [saveMessage, setSaveMessage] = useState<string | null>(null);
+    const [generationError, setGenerationError] = useState<string | null>(null);
 
     const handleBack = () => navigate('/');
     const handleExport = () => {
@@ -25,7 +30,7 @@ const VisualizerId = () => {
 
         const link = document.createElement('a');
         link.href = currentImage;
-        link.download = `roomify-${id || 'design'}.png`;
+        link.download = `roomzup-${id || 'design'}.png`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -33,9 +38,14 @@ const VisualizerId = () => {
 
     const runGeneration = async (item: DesignItem) => {
         if(!id || !item.sourceImage) return;
+        if (!getOpenRouterApiKey()) {
+            window.alert("Add your OpenRouter API key to generate a render.");
+            return;
+        }
 
         try {
             setIsProcessing(true);
+            setGenerationError(null);
             const result = await generate3DView({ sourceImage: item.sourceImage });
 
             if(result.renderedImage) {
@@ -58,11 +68,34 @@ const VisualizerId = () => {
                 }
             }
         } catch (error) {
+            const message = error instanceof Error ? error.message : "Generation failed";
+            setGenerationError(message);
             console.error('Generation failed: ', error)
         } finally {
             setIsProcessing(false);
         }
     }
+
+    const handleSaveApiKey = () => {
+        const trimmed = openRouterKey.trim();
+        setOpenRouterApiKey(trimmed);
+        setIsKeySaved(!!trimmed);
+        setSaveMessage(trimmed ? "Key saved locally." : "Key removed from this browser.");
+    };
+
+    useEffect(() => {
+        const existingKey = getOpenRouterApiKey();
+        if (existingKey) {
+            setOpenRouterKeyState(existingKey);
+            setIsKeySaved(true);
+        }
+    }, []);
+
+    useEffect(() => {
+        if (!saveMessage) return;
+        const timeout = window.setTimeout(() => setSaveMessage(null), 2200);
+        return () => window.clearTimeout(timeout);
+    }, [saveMessage]);
 
     useEffect(() => {
         let isMounted = true;
@@ -75,17 +108,33 @@ const VisualizerId = () => {
 
             setIsProjectLoading(true);
 
-            let fetchedProject: DesignItem | null = null;
-            try {
-                fetchedProject = await getProjectById({ id });
-            } catch (e) {
-                console.error("Failed to load project", e);
-            }
+            const fetchedProject = await getProjectById({ id });
 
             if (!isMounted) return;
 
-            setProject(fetchedProject);
-            setCurrentImage(fetchedProject?.renderedImage || null);
+            if (fetchedProject) {
+                setProject(fetchedProject);
+                setCurrentImage(fetchedProject.renderedImage || null);
+            } else {
+                const state = (location.state || {}) as VisualizerLocationState;
+                if (state?.initialImage) {
+                    const fallbackProject: DesignItem = {
+                        id,
+                        name: state.name || `Residence ${id}`,
+                        sourceImage: state.initialImage,
+                        renderedImage: state.initialRender || null,
+                        timestamp: Date.now(),
+                        ownerId: state.ownerId ?? userId ?? null,
+                        isPublic: false,
+                    };
+                    setProject(fallbackProject);
+                    setCurrentImage(fallbackProject.renderedImage || null);
+                } else {
+                    setProject(null);
+                    setCurrentImage(null);
+                }
+            }
+
             setIsProjectLoading(false);
             hasInitialGenerated.current = false;
         };
@@ -95,7 +144,7 @@ const VisualizerId = () => {
         return () => {
             isMounted = false;
         };
-    }, [id]);
+    }, [id, location.state, userId]);
 
     useEffect(() => {
         if (
@@ -121,7 +170,7 @@ const VisualizerId = () => {
                 <div className="brand">
                     <Box className="logo" />
 
-                    <span className="name">Roomify</span>
+                    <span className="name">Roomzup</span>
                 </div>
                 <Button variant="ghost" size="sm" onClick={handleBack} className="exit">
                     <X className="icon" /> Exit Editor
@@ -151,6 +200,63 @@ const VisualizerId = () => {
                                 Share
                             </Button>
                         </div>
+                    </div>
+
+                    <div className="api-key-card">
+                        <div className="api-key-head">
+                            <div>
+                                <p className="eyebrow">OpenRouter API Key</p>
+                                <h3>Connect your own AI credits</h3>
+                                <p className="note">
+                                    Your key is stored locally in this browser and used only for your renders.
+                                </p>
+                            </div>
+                            <a
+                                className="link"
+                                href="https://openrouter.ai/keys"
+                                target="_blank"
+                                rel="noreferrer"
+                            >
+                                Get API Key
+                            </a>
+                        </div>
+
+                        <div className="api-key-status">
+                            <span className={`dot ${isKeySaved ? "is-live" : "is-empty"}`} />
+                            <span>{isKeySaved ? "Key detected" : "No key saved"}</span>
+                            {saveMessage && <span className="message">{saveMessage}</span>}
+                        </div>
+
+                        <ol className="api-key-steps">
+                            <li>Open OpenRouter and create a key.</li>
+                            <li>Paste the key below and click Save.</li>
+                            <li>Upload a plan and generate your render.</li>
+                        </ol>
+
+                        <div className="api-key-input">
+                            <input
+                                type="password"
+                                value={openRouterKey}
+                                onChange={(event) => setOpenRouterKeyState(event.target.value)}
+                                placeholder="sk-or-..."
+                            />
+                            <Button size="sm" onClick={handleSaveApiKey}>
+                                Save Key
+                            </Button>
+                        </div>
+
+                        <div className="api-key-links">
+                            <a href="https://openrouter.ai/docs" target="_blank" rel="noreferrer">
+                                View docs
+                            </a>
+                            <a href="https://openrouter.ai/credits" target="_blank" rel="noreferrer">
+                                Manage credits
+                            </a>
+                        </div>
+
+                        {generationError && (
+                            <div className="api-key-error">{generationError}</div>
+                        )}
                     </div>
 
                     <div className={`render-area ${isProcessing ? 'is-processing': ''}`}>
@@ -192,10 +298,20 @@ const VisualizerId = () => {
                                 defaultValue={50}
                                 style={{ width: '100%', height: 'auto' }}
                                 itemOne={
-                                    <ReactCompareSliderImage src={project?.sourceImage} alt="before" className="compare-img" />
+                                    <ReactCompareSliderImage 
+                                        src={project?.sourceImage} 
+                                        alt="before" 
+                                        className="compare-img" 
+                                        style={{ objectFit: 'contain', maxHeight: '75vh' }} 
+                                    />
                                 }
                                 itemTwo={
-                                    <ReactCompareSliderImage src={currentImage ?? project?.renderedImage ?? undefined} alt="after" className="compare-img" />
+                                    <ReactCompareSliderImage
+                                        src={(currentImage || project?.renderedImage) ?? undefined}
+                                        alt="after"
+                                        className="compare-img"
+                                        style={{ objectFit: 'contain', maxHeight: '75vh' }}
+                                    />
                                 }
                             />
                         ) : (

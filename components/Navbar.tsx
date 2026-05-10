@@ -10,7 +10,7 @@ const Navbar = () => {
             try {
                 await signOut();
             } catch (e) {
-                console.error(`Puter sign out failed: ${e}`);
+                console.error(`Sign out failed: ${e}`);
             }
 
             return;
@@ -19,7 +19,7 @@ const Navbar = () => {
         try {
             await signIn();
         } catch (e) {
-            console.error(`Puter sign in failed: ${e}`);
+            console.error(`Sign in failed: ${e}`);
         }
     };
 
@@ -31,7 +31,7 @@ const Navbar = () => {
                         <Box  className="logo" />
 
                         <span className="name">
-                            Roomify
+                            Roomzup
                         </span>
                     </div>
 

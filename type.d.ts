@@ -106,16 +106,6 @@ type AuthRequiredModalProps = {
 type ShareAction = "share" | "unshare";
 type ShareStatus = "idle" | "saving" | "done";
 
-type HostingConfig = { subdomain: string };
-type HostedAsset = { url: string };
-
-interface StoreHostedImageParams {
-    hosting: HostingConfig | null;
-    url: string;
-    projectId: string;
-    label: "source" | "rendered";
-}
-
 interface CreateProjectParams {
     item: DesignItem;
     visibility?: "private" | "public";
@@ -124,4 +114,9 @@ interface CreateProjectParams {
 interface Generate3DViewParams {
     sourceImage: string;
     projectId?: string | null;
+}
+
+declare module "*?raw" {
+    const content: string;
+    export default content;
 }

@@ -5,7 +5,7 @@
     --color-foreground: #1a1a1a;
     --color-surface: #ffffff;
     --color-surface-highlight: #f3f4f6;
-    --color-primary: #f97316;
+    --color-primary: #0A5C36;
     --color-secondary: #3b82f6;
     --color-accent: #8b5cf6;
     --font-serif: "Instrument Serif", serif;
@@ -59,7 +59,7 @@
         @apply inline-flex items-center justify-center rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background disabled:opacity-50 disabled:cursor-not-allowed;
 
         &.btn--primary {
-            @apply bg-primary text-white hover:bg-[#EA580C] shadow-sm;
+            @apply bg-primary text-white hover:bg-[#08482b] shadow-sm;
         }
 
         &.btn--secondary {
@@ -149,7 +149,7 @@
                 }
 
                 .cta {
-                    @apply inline-flex items-center justify-center rounded-md font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background disabled:opacity-50 disabled:cursor-not-allowed px-3 py-1.5 text-xs uppercase tracking-wide bg-primary text-white hover:bg-[#EA580C] shadow-sm;
+                    @apply inline-flex items-center justify-center rounded-md font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background disabled:opacity-50 disabled:cursor-not-allowed px-3 py-1.5 text-xs uppercase tracking-wide bg-primary text-white hover:bg-[#08482b] shadow-sm;
                 }
             }
         }
@@ -162,7 +162,7 @@
             @apply bg-white rounded-xl shadow-2xl max-w-md w-full p-6 text-center border border-zinc-200;
 
             .icon {
-                @apply w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4;
+                @apply w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4;
 
                 .alert {
                     @apply text-primary w-6 h-6;
@@ -181,7 +181,7 @@
                 @apply flex flex-col space-y-3;
 
                 .confirm {
-                    @apply bg-primary hover:bg-orange-600 text-white;
+                    @apply bg-primary hover:bg-green-700 text-white;
                 }
 
                 .cancel {
@@ -198,10 +198,10 @@
             @apply relative h-48 rounded-xl border-2 border-dashed transition-all duration-300 flex flex-col items-center justify-center cursor-pointer bg-zinc-50 border-zinc-200 hover:border-zinc-300 hover:bg-zinc-100;
 
             &.is-dragging {
-                @apply border-primary bg-orange-50;
+                @apply border-primary bg-green-50;
 
                 .drop-icon {
-                    @apply bg-orange-100 text-primary;
+                    @apply bg-green-100 text-primary;
                 }
             }
 
@@ -322,7 +322,7 @@
                     @apply flex flex-wrap items-center gap-3;
 
                     .export {
-                        @apply bg-primary text-white hover:bg-orange-600 h-9 border-none shadow-sm;
+                        @apply bg-primary text-white hover:bg-green-700 h-9 border-none shadow-sm;
                     }
 
                     .share {
@@ -331,11 +331,88 @@
                 }
             }
 
+            .api-key-card {
+                @apply mx-5 my-4 rounded-xl border border-zinc-200 bg-zinc-50 p-4;
+
+                .api-key-head {
+                    @apply flex flex-col md:flex-row md:items-start md:justify-between gap-3;
+
+                    .eyebrow {
+                        @apply text-xs font-mono uppercase tracking-widest text-zinc-400;
+                    }
+
+                    h3 {
+                        @apply text-lg font-serif font-bold text-black;
+                    }
+
+                    .note {
+                        @apply text-xs text-zinc-500 mt-1;
+                    }
+
+                    .link {
+                        @apply inline-flex items-center justify-center rounded-lg border border-zinc-200 bg-white px-3 py-2 text-xs font-semibold uppercase tracking-wide text-zinc-700 hover:text-black hover:border-zinc-300;
+                    }
+                }
+
+                .api-key-steps {
+                    @apply mt-3 grid gap-2 text-sm text-zinc-600;
+
+                    li {
+                        @apply flex items-start gap-2;
+                    }
+
+                    li::before {
+                        content: "";
+                        @apply mt-2 h-1.5 w-1.5 rounded-full bg-zinc-400;
+                    }
+                }
+
+                .api-key-status {
+                    @apply mt-3 flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-wide text-zinc-500;
+
+                    .dot {
+                        @apply h-2 w-2 rounded-full;
+                    }
+
+                    .dot.is-live {
+                        @apply bg-green-500;
+                    }
+
+                    .dot.is-empty {
+                        @apply bg-zinc-300;
+                    }
+
+                    .message {
+                        @apply text-zinc-400 normal-case font-medium;
+                    }
+                }
+
+                .api-key-input {
+                    @apply mt-4 flex flex-col md:flex-row items-stretch gap-3;
+
+                    input {
+                        @apply w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary/40;
+                    }
+                }
+
+                .api-key-links {
+                    @apply mt-3 flex flex-wrap items-center gap-4 text-xs font-semibold uppercase tracking-wide text-zinc-400;
+
+                    a {
+                        @apply hover:text-black;
+                    }
+                }
+
+                .api-key-error {
+                    @apply mt-3 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700;
+                }
+            }
+
             .render-area {
-                @apply relative bg-zinc-100 min-h-105;
+                @apply relative bg-zinc-100 min-h-105 flex items-center justify-center;
 
                 .render-img {
-                    @apply w-full h-full object-contain transition-all duration-700 opacity-100 scale-100;
+                    @apply w-full max-h-[75vh] object-contain transition-all duration-700 opacity-100 scale-100;
                 }
 
                 &.is-processing {
@@ -349,7 +426,7 @@
                 }
 
                 .render-fallback {
-                    @apply w-full h-full object-contain opacity-50;
+                    @apply w-full max-h-[75vh] object-contain opacity-50;
                 }
 
                 .render-overlay {
@@ -393,7 +470,7 @@
                 }
 
                 .compare-img {
-                    @apply w-full h-auto object-contain;
+                    @apply w-full h-auto max-h-[75vh] object-contain;
                 }
             }
         }
@@ -433,7 +510,7 @@
                 @apply flex flex-col sm:flex-row gap-4 justify-center mb-16;
 
                 .cta {
-                    @apply inline-flex items-center justify-center rounded-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background px-8 py-3 text-sm uppercase tracking-wide font-bold bg-primary text-white hover:bg-[#ea580c] shadow-md;
+                    @apply inline-flex items-center justify-center rounded-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background px-8 py-3 text-sm uppercase tracking-wide font-bold bg-primary text-white hover:bg-[#08482b] shadow-md;
 
                     .icon {
                         @apply ml-2 w-4 h-4;
@@ -465,10 +542,10 @@
                         @apply text-center mb-6;
 
                         .upload-icon {
-                            @apply w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-3;
+                            @apply w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3;
 
                             .icon {
-                                @apply text-orange-500 w-6 h-6;
+                                @apply text-green-600 w-6 h-6;
                             }
                         }
 

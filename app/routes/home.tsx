@@ -3,20 +3,19 @@ import Navbar from "../../components/Navbar";
 import {ArrowRight, ArrowUpRight, Clock, Layers} from "lucide-react";
 import Button from "../../components/ui/Button";
 import Upload from "../../components/Upload";
-import {useNavigate, useOutletContext} from "react-router";
+import {useNavigate} from "react-router";
 import {useEffect, useRef, useState} from "react";
-import {createProject, getProjects} from "../../lib/puter.action";
+import { createProject, getProjects } from "../../lib/app.actions";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "New React Router App" },
-    { name: "description", content: "Welcome to React Router!" },
+    { title: "Roomzup | AI Architectural Visualizer" },
+    { name: "description", content: "Transform your 2D floor plans into stunning 3D architectural renders with Roomzup." },
   ];
 }
 
 export default function Home() {
     const navigate = useNavigate();
-    const { isSignedIn } = useOutletContext<AuthContext>();
     const [projects, setProjects] = useState<DesignItem[]>([]);
     const isCreatingProjectRef = useRef(false);
 
@@ -38,7 +37,14 @@ export default function Home() {
 
             if(!saved) {
                 console.error("Failed to create project");
-                return false;
+                navigate(`/visualizer/${newId}`, {
+                    state: {
+                        initialImage: newItem.sourceImage,
+                        initialRender: null,
+                        name
+                    }
+                });
+                return true;
             }
 
             setProjects((prev) => [saved, ...prev]);
@@ -52,9 +58,6 @@ export default function Home() {
             });
 
             return true;
-        } catch (e) {
-            console.error("Failed to create project", e);
-            return false;
         } finally {
             isCreatingProjectRef.current = false;
         }
@@ -62,22 +65,13 @@ export default function Home() {
 
     useEffect(() => {
         const fetchProjects = async () => {
-            if (!isSignedIn) {
-                setProjects([]);
-                return;
-            }
+            const items = await getProjects();
 
-            try {
-                const items = await getProjects();
-                setProjects(items)
-            } catch (e) {
-                console.error("Failed to fetch projects", e);
-                setProjects([]);
-            }
+            setProjects(items)
         }
 
         fetchProjects();
-    }, [isSignedIn]);
+    }, []);
 
   return (
       <div className="home">
@@ -89,13 +83,13 @@ export default function Home() {
                       <div className="pulse"></div>
                   </div>
 
-                  <p>Introducing Roomify 2.0</p>
+                  <p>Introducing Roomzup 1.0</p>
               </div>
 
-              <h1>Build beautiful spaces at the speed of thought with Roomify</h1>
+              <h1>Build beautiful spaces at the speed of thought with Roomzup</h1>
 
               <p className="subtitle">
-                  Roomify is an AI-first design environment that helps you visualize, render, and ship architectural projects faster  than ever.
+                  Roomzup is an AI-first design environment that helps you visualize, render, and ship architectural projects faster  than ever.
               </p>
 
               <div className="actions">
@@ -154,7 +148,7 @@ export default function Home() {
                                       <div className="meta">
                                           <Clock size={12} />
                                           <span>{new Date(timestamp).toLocaleDateString()}</span>
-                                          <span>By JS Mastery</span>
+                                          <a href="https://linkedin.com/in/usman4byte" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors cursor-pointer" onClick={(e) => e.stopPropagation()}>By Usman4Byte</a>
                                       </div>
                                   </div>
                                   <div className="arrow">

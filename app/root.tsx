@@ -10,11 +10,7 @@ import {
 import type { Route } from "./+types/root";
 import "./app.css";
 import {useEffect, useState} from "react";
-import {
-    getCurrentUser,
-    signIn as puterSignIn,
-    signOut as puterSignOut,
-} from "../lib/puter.action";
+import { getCurrentUser, signIn, signOut } from "../lib/app.actions";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -56,20 +52,14 @@ const DEFAULT_AUTH_STATE: AuthState = {
 export default function App() {
     const [authState, setAuthState] = useState<AuthState>(DEFAULT_AUTH_STATE);
 
-  const shouldAutoRefreshAuth = () => {
-    if (typeof window === "undefined") return false;
-    const host = window.location.hostname;
-    return host.endsWith(".puter.site") || host === "puter.com" || host.endsWith(".puter.com");
-  };
-
     const refreshAuth = async () => {
         try {
-            const user = await getCurrentUser();
+        const user = await getCurrentUser();
 
             setAuthState({
-                isSignedIn: !!user,
-                userName: user?.username || null,
-                userId: user?.uuid || null,
+              isSignedIn: !!user,
+              userName: (user as any)?.user_metadata?.full_name || user?.email || null,
+              userId: (user as any)?.id || null,
             });
 
             return !!user;
@@ -80,24 +70,23 @@ export default function App() {
     }
 
     useEffect(() => {
-      if (!shouldAutoRefreshAuth()) return;
-      void refreshAuth();
+        refreshAuth()
     }, []);
 
-    const signIn = async () => {
-        await puterSignIn();
-        return await refreshAuth();
+    const handleSignIn = async () => {
+      await signIn();
+      return await refreshAuth();
     }
 
-    const signOut = async () => {
-      await puterSignOut();
+    const handleSignOut = async () => {
+        await signOut();
         return await refreshAuth();
     }
 
   return (
       <main className="min-h-screen bg-background text-foreground relative z-10">
         <Outlet
-            context={{ ...authState, refreshAuth, signIn, signOut }}
+          context={{ ...authState, refreshAuth, signIn: handleSignIn, signOut: handleSignOut }}
         />
       </main>
   )
